@@ -12,6 +12,10 @@ Links for less common datasets are as follows, [80 Million Tiny Images](http://h
 [Textures](https://www.robots.ox.ac.uk/~vgg/data/dtd/), [Places365](http://places2.csail.mit.edu/download.html), [LSUN-C](https://www.dropbox.com/s/fhtsw1m3qxlwj6h/LSUN.tar.gz), [LSUN-Resize](https://www.dropbox.com/s/moqh2wh8696c3yl/LSUN_resize.tar.gz), [iSUN](https://www.dropbox.com/s/ssz7qxfqae0cca5/iSUN.tar.gz).
 Please download these dataset to folder ``\dataset``.
 
+## Package dependencies
+You can use Use `conda env create -f environment.yaml` to create a conda env. Major dependencies include
+`pytorch, torchvision, wandb, numpy`.
+
 ## Training & Testing
 Example for running foster:
 ```
