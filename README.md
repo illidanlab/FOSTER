@@ -38,7 +38,7 @@ python foster.py --pd_nuser 50 --pu_nclass 3 --wk_iters 5 --model wrn --data stl
 Definition for some important parameters:
 |Parameter name | Deifinition|
 | ------------- |------------|
-|pd_nuser|users per domain(for cifar10, cifar100, stl, they only have 1 domain. DomianNet has multiple domains.)|
+|pd_nuser|users per domain. For cifar10, cifar100, stl, they only have 1 domain. DomianNet has multiple domains.|
 |pr_nuser|active users per comm round|
 |pu_nclass|class per user|
 |evaluation_score|post hoc score, eg, msp, Odin, energy, SVM|
