@@ -46,3 +46,16 @@ Definition for some important parameters:
 |pr_nuser|active users per comm round|
 |pu_nclass|class per user|
 |evaluation_score|post hoc score, eg, msp, Odin, energy, SVM|
+
+## Citation
+
+```bibtex
+@inproceedings{
+yu2023turning,
+title={Turning the Curse of Heterogeneity in Federated Learning into a Blessing for Out-of-Distribution Detection},
+author={Shuyang Yu and Junyuan Hong and Haotao Wang and Zhangyang Wang and Jiayu Zhou},
+booktitle={The Eleventh International Conference on Learning Representations },
+year={2023},
+url={https://openreview.net/forum?id=mMNimwRb7Gr}
+}
+```
