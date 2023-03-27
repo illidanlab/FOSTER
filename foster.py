@@ -384,10 +384,10 @@ if __name__ == '__main__':
             dataset_name = ["Texture", "Places365", "LSUN_C", "LSUN_Resize", "iSUN", "CIFAR100"]
         else:
             dataset_name = ["Texture", "Places365", "LSUN_C", "LSUN_Resize", "iSUN"]
-        auroc_mt, aupr_mt, fpr_mt, test_acc_mt = AverageMeter(), AverageMeter(), AverageMeter(), AverageMeter()
-        auroc_detail, aupr_detail, fpr_detail = {}, {}, {}
+        auroc_mt, aupr_mt, test_acc_mt = AverageMeter(), AverageMeter(), AverageMeter()
+        auroc_detail, aupr_detail = {}, {}
         for i in range(len(dataset_name)):
-            auroc_detail[dataset_name[i]], aupr_detail[dataset_name[i]], fpr_detail[dataset_name[i]] = AverageMeter(), AverageMeter(), AverageMeter()
+            auroc_detail[dataset_name[i]], aupr_detail[dataset_name[i]] = AverageMeter(), AverageMeter()
         if args.data == 'tin':
             test_loaders = val_loaders
         for test_idx, test_loader in enumerate(test_loaders):
@@ -395,21 +395,20 @@ if __name__ == '__main__':
             _, test_acc = test(running_model, test_loader, loss_fun, device,
                                adversary=adversary)
             print(' {:<11s}| Test  Acc: {:.4f}'.format(fed.clients[test_idx], test_acc))
-            auroc, aupr, fpr, auroc_list, aupr_list, fpr_list = VOS_evaluate(args, args.out_as_pos, args.num_to_avg, args.use_xent, args.method_name, args.evaluation_score, args.test_batch, args.T, args.noise, running_model,
+            auroc, aupr, auroc_list, aupr_list = VOS_evaluate(args, args.out_as_pos, args.num_to_avg, args.use_xent, args.method_name, args.evaluation_score, args.test_batch, args.T, args.noise, running_model,
                          test_loader, train_loaders[test_idx], user_class[test_idx], data_name=args.data, m_name=args.use_external, client_id=test_idx)
 
             wandb.summary[f'{fed.clients[test_idx]} test acc'] = test_acc
             test_acc_mt.append(test_acc)
             wandb.summary[f'{fed.clients[test_idx]} auroc'] = auroc
             wandb.summary[f'{fed.clients[test_idx]} aupr'] = aupr
-            wandb.summary[f'{fed.clients[test_idx]} fpr'] = fpr
             auroc_mt.append(auroc)
             aupr_mt.append(aupr)
-            fpr_mt.append(fpr)
+
             for i in range(len(dataset_name)):
                 auroc_detail[dataset_name[i]].append(auroc_list[i])
                 aupr_detail[dataset_name[i]].append(aupr_list[i])
-                fpr_detail[dataset_name[i]].append(fpr_list[i])
+
 
         # Profile model FLOPs, sizes (#param)
         from nets.profile_func import profile_model
@@ -421,16 +420,14 @@ if __name__ == '__main__':
 
         print(f"\n Average Test auroc: {auroc_mt.avg}")
         print(f"\n Average Test aupr: {aupr_mt.avg}")
-        print(f"\n Average Test fpr: {fpr_mt.avg}")
         print(f"\n Average Test Acc: {test_acc_mt.avg}")
         wandb.summary[f'avg test acc'] = test_acc_mt.avg
         wandb.summary[f'avg test auroc'] = auroc_mt.avg
         wandb.summary[f'avg test aupr'] = aupr_mt.avg
-        wandb.summary[f'avg test fpr'] = fpr_mt.avg
         print("Show detail:")
         for i in range(len(dataset_name)):
             print("{} detection".format(dataset_name[i]))
-            print("auroc: {}, aupr: {}, fpr: {}".format(auroc_detail[dataset_name[i]].avg, aupr_detail[dataset_name[i]].avg, fpr_detail[dataset_name[i]].avg))
+            print("auroc: {}, aupr: {}".format(auroc_detail[dataset_name[i]].avg, aupr_detail[dataset_name[i]].avg))
 
         wandb.finish()
 

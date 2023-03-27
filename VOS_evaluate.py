@@ -51,7 +51,7 @@ def get_SVM_score(ood_loader, clf, in_score, out_as_pos):
     auroc = np.mean(measures[0])
     aupr = np.mean(measures[1])
     fpr = np.mean((measures[2]))
-    print_measures(auroc, aupr, fpr)
+    print_measures(auroc, aupr)
     return auroc, aupr, fpr
 def get_other_score(in_score, out_score, out_as_pos):
     print("inscore shape", in_score.shape)
@@ -63,7 +63,7 @@ def get_other_score(in_score, out_score, out_as_pos):
     auroc = np.mean(measures[0])
     aupr = np.mean(measures[1])
     fpr = np.mean((measures[2]))
-    print_measures(auroc, aupr, fpr)
+    print_measures(auroc, aupr)
     return auroc, aupr, fpr
 
 
@@ -214,7 +214,7 @@ def VOS_evaluate(args, out_as_pos,num_to_avg, use_xent, method_name, score,test_
     #show_performance(wrong_score, right_score, method_name=method_name)
 
     # /////////////// OOD Detection ///////////////
-    auroc_list, aupr_list, fpr_list = [], [], []
+    auroc_list, aupr_list = [], []
     # /////////////// Textures ///////////////
     if data_name == 'stl':
         ood_data = dset.ImageFolder(root="dataset/dtd/images",
@@ -232,20 +232,20 @@ def VOS_evaluate(args, out_as_pos,num_to_avg, use_xent, method_name, score,test_
                                              num_workers=4, pin_memory=True)
     print('\n\nTexture Detection')
     if score == 'SVM':
-        auroc, aupr, fpr = get_SVM_score(ood_loader, clf, in_score, out_as_pos)
+        auroc, aupr, _ = get_SVM_score(ood_loader, clf, in_score, out_as_pos)
     elif score == 'KNN':
         print("score", score)
         scores_in, all_score_ood = run_knn_func(client_id, args.loss_weight, train_loader, test_loader, ood_loader, net, args.batch, test_bs, num_classes, data_name, ['Texture'], m_name)
-        auroc, aupr, fpr = get_other_score(scores_in, all_score_ood, out_as_pos)
+        auroc, aupr, _ = get_other_score(scores_in, all_score_ood, out_as_pos)
     elif score == 'vim':
         print("score", score)
         scores_in, score_out = get_vim(client_id, args.loss_weight, train_loader, test_loader, ood_loader, net, data_name, ['Texture'], args.batch, test_bs, num_classes, m_name)
-        auroc, aupr, fpr = get_other_score(scores_in, score_out, out_as_pos)
+        auroc, aupr, _ = get_other_score(scores_in, score_out, out_as_pos)
     else:
-        auroc, aupr, fpr = get_and_print_results(user_class, use_xent, method_name, score, test_bs,T,out_as_pos, noise, to_np, concat,net,ood_num_examples,num_classes,sample_mean, precision, count,num_batches,in_score, ood_loader, num_to_avg)
+        auroc, aupr, _ = get_and_print_results(user_class, use_xent, method_name, score, test_bs,T,out_as_pos, noise, to_np, concat,net,ood_num_examples,num_classes,sample_mean, precision, count,num_batches,in_score, ood_loader, num_to_avg)
     auroc_list.append(auroc);
     aupr_list.append(aupr);
-    fpr_list.append(fpr)
+
 
     # /////////////// SVHN /////////////// # cropped and no sampling of the test set
     # ood_data = dset.ImageFolder(root="dataset/svhn_t",
@@ -276,20 +276,20 @@ def VOS_evaluate(args, out_as_pos,num_to_avg, use_xent, method_name, score,test_
                                              num_workers=2, pin_memory=True)
     print('\n\nPlaces365 Detection')
     if score == 'SVM':
-        auroc, aupr, fpr = get_SVM_score(ood_loader, clf, in_score, out_as_pos)
+        auroc, aupr, _ = get_SVM_score(ood_loader, clf, in_score, out_as_pos)
     elif score == 'KNN':
         scores_in, all_score_ood = run_knn_func(client_id, args.loss_weight, train_loader, test_loader, ood_loader, net, args.batch, test_bs,
                                                 num_classes, data_name, ['Places365'], m_name)
-        auroc, aupr, fpr = get_other_score(scores_in, all_score_ood, out_as_pos)
+        auroc, aupr, _ = get_other_score(scores_in, all_score_ood, out_as_pos)
     elif score == 'vim':
         scores_in, score_out = get_vim(client_id, args.loss_weight, train_loader, test_loader, ood_loader, net, data_name, ['Places365'], args.batch,
                                        test_bs, num_classes, m_name)
-        auroc, aupr, fpr = get_other_score(scores_in, score_out, out_as_pos)
+        auroc, aupr, _ = get_other_score(scores_in, score_out, out_as_pos)
     else:
-        auroc, aupr, fpr= get_and_print_results(user_class, use_xent, method_name, score, test_bs,T,out_as_pos, noise, to_np, concat,net,ood_num_examples,num_classes,sample_mean, precision, count,num_batches,in_score, ood_loader, num_to_avg)
+        auroc, aupr, _= get_and_print_results(user_class, use_xent, method_name, score, test_bs,T,out_as_pos, noise, to_np, concat,net,ood_num_examples,num_classes,sample_mean, precision, count,num_batches,in_score, ood_loader, num_to_avg)
     auroc_list.append(auroc);
     aupr_list.append(aupr);
-    fpr_list.append(fpr)
+
 
     # /////////////// LSUN-C ///////////////
     if data_name == 'stl':
@@ -305,20 +305,20 @@ def VOS_evaluate(args, out_as_pos,num_to_avg, use_xent, method_name, score,test_
                                              num_workers=1, pin_memory=True)
     print('\n\nLSUN_C Detection')
     if score == 'SVM':
-        auroc, aupr, fpr = get_SVM_score(ood_loader, clf, in_score, out_as_pos)
+        auroc, aupr, _ = get_SVM_score(ood_loader, clf, in_score, out_as_pos)
     elif score == 'KNN':
         scores_in, all_score_ood = run_knn_func(client_id, args.loss_weight, train_loader, test_loader, ood_loader, net, args.batch, test_bs,
                                                 num_classes, data_name, ['LSUN_C'], m_name)
-        auroc, aupr, fpr = get_other_score(scores_in, all_score_ood, out_as_pos)
+        auroc, aupr, _ = get_other_score(scores_in, all_score_ood, out_as_pos)
     elif score == 'vim':
         scores_in, score_out = get_vim(client_id, args.loss_weight, train_loader, test_loader, ood_loader, net, data_name, ['LSUN_C'], args.batch,
                                        test_bs, num_classes, m_name)
-        auroc, aupr, fpr = get_other_score(scores_in, score_out, out_as_pos)
+        auroc, aupr, _ = get_other_score(scores_in, score_out, out_as_pos)
     else:
-        auroc, aupr, fpr= get_and_print_results(user_class, use_xent, method_name, score, test_bs,T,out_as_pos, noise, to_np, concat,net,ood_num_examples,num_classes,sample_mean, precision, count,num_batches,in_score, ood_loader, num_to_avg)
+        auroc, aupr, _= get_and_print_results(user_class, use_xent, method_name, score, test_bs,T,out_as_pos, noise, to_np, concat,net,ood_num_examples,num_classes,sample_mean, precision, count,num_batches,in_score, ood_loader, num_to_avg)
     auroc_list.append(auroc);
     aupr_list.append(aupr);
-    fpr_list.append(fpr)
+
 
     # /////////////// LSUN-R ///////////////
     if data_name == 'stl':
@@ -334,21 +334,21 @@ def VOS_evaluate(args, out_as_pos,num_to_avg, use_xent, method_name, score,test_
                                              num_workers=1, pin_memory=True)
     print('\n\nLSUN_Resize Detection')
     if score == 'SVM':
-        auroc, aupr, fpr = get_SVM_score(ood_loader, clf, in_score, out_as_pos)
+        auroc, aupr, _ = get_SVM_score(ood_loader, clf, in_score, out_as_pos)
     elif score == 'KNN':
         scores_in, all_score_ood = run_knn_func(client_id, args.loss_weight, train_loader, test_loader, ood_loader, net, args.batch, test_bs,
                                                 num_classes, data_name, ['LSUN_R'], m_name)
-        auroc, aupr, fpr = get_other_score(scores_in, all_score_ood, out_as_pos)
+        auroc, aupr, _ = get_other_score(scores_in, all_score_ood, out_as_pos)
     elif score == 'vim':
         scores_in, score_out = get_vim(client_id, args.loss_weight, train_loader, test_loader, ood_loader, net, data_name, ['LSUN_R'], args.batch,
                                        test_bs, num_classes, m_name)
-        auroc, aupr, fpr = get_other_score(scores_in, score_out, out_as_pos)
+        auroc, aupr, _ = get_other_score(scores_in, score_out, out_as_pos)
 
     else:
-        auroc, aupr, fpr= get_and_print_results(user_class, use_xent, method_name, score, test_bs,T,out_as_pos, noise, to_np, concat,net,ood_num_examples,num_classes,sample_mean, precision, count,num_batches,in_score, ood_loader, num_to_avg)
+        auroc, aupr, _= get_and_print_results(user_class, use_xent, method_name, score, test_bs,T,out_as_pos, noise, to_np, concat,net,ood_num_examples,num_classes,sample_mean, precision, count,num_batches,in_score, ood_loader, num_to_avg)
     auroc_list.append(auroc);
     aupr_list.append(aupr);
-    fpr_list.append(fpr)
+
 
     # /////////////// iSUN ///////////////
     if data_name == 'stl':
@@ -364,20 +364,20 @@ def VOS_evaluate(args, out_as_pos,num_to_avg, use_xent, method_name, score,test_
                                              num_workers=1, pin_memory=True)
     print('\n\niSUN Detection')
     if score == 'SVM':
-        auroc, aupr, fpr = get_SVM_score(ood_loader, clf, in_score, out_as_pos)
+        auroc, aupr, _ = get_SVM_score(ood_loader, clf, in_score, out_as_pos)
     elif score == 'KNN':
         scores_in, all_score_ood = run_knn_func(client_id, args.loss_weight, train_loader, test_loader, ood_loader, net, args.batch, test_bs,
                                                 num_classes, data_name, ['iSUN'], m_name)
-        auroc, aupr, fpr = get_other_score(scores_in, all_score_ood, out_as_pos)
+        auroc, aupr, _ = get_other_score(scores_in, all_score_ood, out_as_pos)
     elif score == 'vim':
         scores_in, score_out = get_vim(client_id, args.loss_weight, train_loader, test_loader, ood_loader, net, data_name, ['iSUN'], args.batch,
                                        test_bs, num_classes, m_name)
-        auroc, aupr, fpr = get_other_score(scores_in, score_out, out_as_pos)
+        auroc, aupr, _ = get_other_score(scores_in, score_out, out_as_pos)
     else:
-        auroc, aupr, fpr= get_and_print_results(user_class, use_xent, method_name, score, test_bs,T,out_as_pos, noise, to_np, concat,net,ood_num_examples,num_classes,sample_mean, precision, count,num_batches,in_score, ood_loader, num_to_avg)
+        auroc, aupr, _= get_and_print_results(user_class, use_xent, method_name, score, test_bs,T,out_as_pos, noise, to_np, concat,net,ood_num_examples,num_classes,sample_mean, precision, count,num_batches,in_score, ood_loader, num_to_avg)
     auroc_list.append(auroc);
     aupr_list.append(aupr);
-    fpr_list.append(fpr)
+
 
     #///////////CIFAR100//////////////////
     #mean and standard deviation of channels of CIFAR-100 images
@@ -391,30 +391,30 @@ def VOS_evaluate(args, out_as_pos,num_to_avg, use_xent, method_name, score,test_
                                                  num_workers=1, pin_memory=True)
         print('\n\nCIFAR100 Detection')
         if score == 'SVM':
-            auroc, aupr, fpr = get_SVM_score(ood_loader, clf, in_score, out_as_pos)
+            auroc, aupr, _ = get_SVM_score(ood_loader, clf, in_score, out_as_pos)
         elif score == 'KNN':
             scores_in, all_score_ood = run_knn_func(client_id, args.loss_weight, train_loader, test_loader, ood_loader, net, args.batch, test_bs,
                                                     num_classes, data_name, ['Cifar100'], m_name)
-            auroc, aupr, fpr = get_other_score(scores_in, all_score_ood, out_as_pos)
+            auroc, aupr, _ = get_other_score(scores_in, all_score_ood, out_as_pos)
         elif score == 'vim':
             scores_in, score_out = get_vim(client_id, args.loss_weight, train_loader, test_loader, ood_loader, net, data_name, ['Cifar100'],
                                            args.batch,
                                            test_bs, num_classes, m_name)
-            auroc, aupr, fpr = get_other_score(scores_in, score_out, out_as_pos)
+            auroc, aupr, _ = get_other_score(scores_in, score_out, out_as_pos)
         else:
-            auroc, aupr, fpr = get_and_print_results(user_class, use_xent, method_name, score, test_bs, T, out_as_pos,
+            auroc, aupr, _ = get_and_print_results(user_class, use_xent, method_name, score, test_bs, T, out_as_pos,
                                                  noise, to_np, concat,
                                                  net, ood_num_examples, num_classes, sample_mean, precision, count,
                                                  num_batches, in_score, ood_loader, num_to_avg)
         auroc_list.append(auroc);
         aupr_list.append(aupr);
-        fpr_list.append(fpr)
+
 
     # /////////////// Mean Results ///////////////
 
     print('\n\nMean Test Results!!!!!')
-    print_measures(np.mean(auroc_list), np.mean(aupr_list), np.mean(fpr_list), method_name=method_name)
-    return np.mean(auroc_list), np.mean(aupr_list), np.mean(fpr_list), auroc_list, aupr_list, fpr_list
+    print_measures(np.mean(auroc_list), np.mean(aupr_list),  method_name=method_name)
+    return np.mean(auroc_list), np.mean(aupr_list), auroc_list, aupr_list
 
 
 def get_and_print_results(user_class, use_xent, method_name, score, test_bs,T,out_as_pos, noise, to_np, concat,net,ood_num_examples,num_classes,sample_mean, precision, count,num_batches,in_score, ood_loader, num_to_avg):
@@ -442,9 +442,9 @@ def get_and_print_results(user_class, use_xent, method_name, score, test_bs,T,ou
 
 
     if num_to_avg >= 5:
-        print_measures_with_std(aurocs, auprs, fprs, method_name)
+        print_measures_with_std(aurocs, auprs, method_name)
     else:
-        print_measures(auroc, aupr, fpr, method_name)
+        print_measures(auroc, aupr, method_name)
     return auroc, aupr, fpr
 
 
