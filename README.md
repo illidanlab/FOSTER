@@ -10,7 +10,11 @@ federated learning (FL) is largely overlooked, even though many security sensiti
 ## OoD dataset used for evaluation
 Links for less common datasets are as follows, [80 Million Tiny Images](http://horatio.cs.nyu.edu/mit/tiny/data/tiny_images.bin)
 [Textures](https://www.robots.ox.ac.uk/~vgg/data/dtd/), [Places365](http://places2.csail.mit.edu/download.html), [LSUN-C](https://www.dropbox.com/s/fhtsw1m3qxlwj6h/LSUN.tar.gz), [LSUN-Resize](https://www.dropbox.com/s/moqh2wh8696c3yl/LSUN_resize.tar.gz), [iSUN](https://www.dropbox.com/s/ssz7qxfqae0cca5/iSUN.tar.gz).
-Please download these dataset to folder ``\dataset``.
+Please download these datasets to folder ``\dataset``.
+
+## Package dependencies
+You can use Use `conda env create -f environment.yaml` to create a conda env. Major dependencies include
+`pytorch, torchvision, wandb, numpy`.
 
 ## Training & Testing
 Example for running foster:
@@ -42,3 +46,16 @@ Definition for some important parameters:
 |pr_nuser|active users per comm round|
 |pu_nclass|class per user|
 |evaluation_score|post hoc score, eg, msp, Odin, energy, SVM|
+
+## Citation
+
+```bibtex
+@inproceedings{
+yu2023turning,
+title={Turning the Curse of Heterogeneity in Federated Learning into a Blessing for Out-of-Distribution Detection},
+author={Shuyang Yu and Junyuan Hong and Haotao Wang and Zhangyang Wang and Jiayu Zhou},
+booktitle={The Eleventh International Conference on Learning Representations },
+year={2023},
+url={https://openreview.net/forum?id=mMNimwRb7Gr}
+}
+```
